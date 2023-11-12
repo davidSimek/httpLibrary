@@ -28,7 +28,7 @@ typedef struct {
 
 // setup
 int setupServer(HttpConfig* config);
-void cleanupServer();
+void cleanupServer(HttpConfig* config);
 
 // in
 int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);

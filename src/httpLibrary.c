@@ -34,7 +34,9 @@ int setupServer(HttpConfig* config) {
     printf("Server listening on port %d\n", config->port);
     return 1;
 }
-void cleanupServer();
+void cleanupServer(HttpConfig* config) {
+    close(config->serverSocket);
+}
 
 //   n == requestLenght
 //  -1 == Couldn't accept connection.

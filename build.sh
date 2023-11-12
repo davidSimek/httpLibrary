@@ -39,7 +39,7 @@ build_linux() {
         info "building with debug flags"
         error "unimplemented for now"
     fi
-    gcc -o out/http src/main.c
+    gcc -o out/http src/main.c src/httpLibrary.c
 }
 
 # -----
