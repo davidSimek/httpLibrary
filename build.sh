@@ -26,13 +26,14 @@ error() {
 # WINDOWS
 build_windows() {
     info "Building for Windows"
+    logFile="logFile.log"
+
     if [[ $1 = "-g" ]]; then
         info "building with debug flags"
-        error "unimplemented for now"
+        x86_64-w64-mingw32-gcc -g -DWINDOWS=1 -o out/http src/main.c src/httpLibrary.c -lws2_32 2> "$logFile"
+    else
+        x86_64-w64-mingw32-gcc -DWINDOWS=1 -o out/http src/main.c src/httpLibrary.c -lws2_32 2> "$logFile"
     fi
-
-    logFile="logFile.log"
-    x86_64-w64-mingw32-gcc -DWINDOWS=1 -o http src/main.c src/httpLibrary.c -lws2_32 2> "$logFile"
 
     if [ $? -eq 0 ]; then
         success "Program successfully compiled."
@@ -46,13 +47,15 @@ build_windows() {
 # GNU/LINUX
 build_linux() {
     info "Building for GNU/Linux"
+    logFile="logFile.log"
+
     if [[ $1 = "-g" ]]; then
         info "building with debug flags"
-        error "unimplemented for now"
+        gcc -g -o out/http src/main.c src/httpLibrary.c 2> "$logFile"
+    else
+        gcc -o out/http src/main.c src/httpLibrary.c 2> "$logFile"
     fi
 
-    logFile="logFile.log"
-    gcc -o http src/main.c src/httpLibrary.c 2> "$logFile"
 
     if [ $? -eq 0 ]; then
         success "Program successfully compiled."
