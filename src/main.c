@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     HttpConfig config;
-    config.port = 8080;
+    setPort(&config, 8080);
     setupServer(&config);
     char* request = (char*)malloc(REQUEST_MAX_LENGTH + 1);
 
@@ -18,5 +18,6 @@ int main(int argc, char *argv[])
     sendResponse(&config, response, strlen(response));
     cleanupServer(&config);
 
+    free(request);
     return 0;
 }
