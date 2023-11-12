@@ -10,13 +10,13 @@ BLUEF="\e[34m"
 ENDCOLOR="\e[0m"
 
 info() {
-    echo -e "${BLUEF}[INFO]${ENDCOLOR}$1"
+    echo -e "${BLUEF}[INFO] ${ENDCOLOR}$1"
 }
 success() {
-    echo -e "${GREENF}[SUCCESS]${ENDCOLOR}$1"
+    echo -e "${GREENF}[SUCCESS] ${ENDCOLOR}$1"
 }
 error() {
-    echo -e "${REDF}[ERROR]${ENDCOLOR}$1"
+    echo -e "${REDF}[ERROR] ${ENDCOLOR}$1"
 }
 
 # ---------
@@ -25,7 +25,7 @@ error() {
 
 # WINDOWS
 build_windows() {
-    info "building for Windows"
+    info "Building for Windows"
     if [[ $1 = "-g" ]]; then
         info "building with debug flags"
     fi
@@ -34,12 +34,21 @@ build_windows() {
 
 # GNU/LINUX
 build_linux() {
-    info "building for GNU/Linux"
+    info "Building for GNU/Linux"
     if [[ $1 = "-g" ]]; then
         info "building with debug flags"
         error "unimplemented for now"
     fi
-    gcc -o out/http src/main.c src/httpLibrary.c
+
+    logFile="logFile.log"
+    gcc -o http src/main.c src/httpLibrary.c 2> "$logFile"
+
+    if [ $? -eq 0 ]; then
+        success "Program successfully compiled."
+    else
+        error "Program didn't compile."
+        cat $logFile
+    fi
 }
 
 # -----
@@ -51,5 +60,5 @@ if [ "$1" = "-w" ]; then
 elif [[ "$1" = "-l" ]]; then
     build_linux $2
 else
-    error "usage: build [-w(Windows)|-l(GNU/Linux] -g(?)"
+    error "Usage: build [-w(Windows)|-l(GNU/Linux] -g(?)"
 fi

@@ -6,6 +6,10 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+void setPort(HttpConfig* config, int port) {
+    config->port = port;
+}
+
 // -1 == couldn't create socket
 // -2 == couldn't bind socket
 // -3 == cannot listen for connections
