@@ -58,3 +58,5 @@ As this repo contains build script, you can compile with -g flag. Run `./build.s
 There are also logs, which will be optional in future. I just have it on all the time for debug purposes.
 
 ## License
+
+This project utilizes GNU GENERAL PUBLIC LICENSE. More info in LICENSE file.
