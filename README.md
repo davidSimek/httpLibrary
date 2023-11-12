@@ -52,4 +52,7 @@ int main(int argc, char *argv[])
 
 ## Troubleshooting
 
+As this repo contains build script, you can compile with -g flag. Run `./build.sh` and it will guide you.
+There are also logs, which will be optional in future. I just have it on all the time for debug purposes.
+
 ## License
