@@ -24,6 +24,8 @@ GNU/Linux or Widnows system (Windows in not tested yet)
 
 You can't go simpler.  
 ```c
+// #define WINDOWS if building for windows
+// you can do this in gcc like this: gcc -DWINDOWS=1 ...
 #include "httpLibrary.h"
 
 #include <stdio.h>
