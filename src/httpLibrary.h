@@ -2,7 +2,13 @@
 #define HTTP_LIBRARY_H
 
 #include <stdlib.h>
+
+#ifdef WINDOWS 
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <arpa/inet.h>
+#endif
 
 typedef struct {
     char method[10];
@@ -16,6 +22,17 @@ typedef struct {
     char reasonPhrase[10];
 } HttpResponse;
 
+#ifdef WINDOWS
+typedef struct {
+    int port;
+    SOCKET serverSocket;  // Change from int to SOCKET
+    SOCKET clientSocket;  // Change from int to SOCKET
+    int maxConnections;
+    struct sockaddr_in serverAddress;
+    struct sockaddr_in clientAddress;
+    int clientAddressLength;  // Change from socklen_t to int
+} HttpConfig;
+#else
 typedef struct {
     int port;
     int serverSocket;
@@ -24,7 +41,8 @@ typedef struct {
     struct sockaddr_in serverAddress;
     struct sockaddr_in clientAddress;
     socklen_t clientAddressLength;
-} HttpConfig;
+} HttpConfig;   
+#endif
 
 // setup
 int setupServer(HttpConfig* config);

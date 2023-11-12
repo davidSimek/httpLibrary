@@ -28,8 +28,19 @@ build_windows() {
     info "Building for Windows"
     if [[ $1 = "-g" ]]; then
         info "building with debug flags"
+        error "unimplemented for now"
     fi
-    error "unimplemented for now"
+
+    logFile="logFile.log"
+    x86_64-w64-mingw32-gcc -DWINDOWS=1 -o http src/main.c src/httpLibrary.c -lws2_32 2> "$logFile"
+
+    if [ $? -eq 0 ]; then
+        success "Program successfully compiled."
+    else
+        error "Program didn't compile."
+        cat $logFile
+    fi
+
 }
 
 # GNU/LINUX
