@@ -253,6 +253,7 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
                 return;
             }
             request->body[stageIndex] = currentChar;
+            stageIndex++;
         }
     }
 }
