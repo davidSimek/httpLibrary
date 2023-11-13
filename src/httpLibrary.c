@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 #ifdef WINDOWS
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -166,7 +167,11 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
     //      4 -> body
     int stage = 0;
     // index starting from 0 in each stage
-    int stageIndex;
+    int stageIndex = 0;
+    // switching key/value for headers
+    bool isKey = true;
+    // to find on which char I am in headers stage
+    int charIndex = 0;
     for (int i = 0; i < rawRequestLength; i++) {
         char currentChar = rawRequest[i];
 
@@ -181,7 +186,7 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
             stageIndex++;
         }
 
-        if (stage == 1) {
+        else if (stage == 1) {
             if (currentChar == ' ') {
                 request->path[stageIndex] = '\0';
                 stage = 2;
@@ -192,7 +197,7 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
             stageIndex++;
         }
 
-        if (stage == 2) {
+        else if (stage == 2) {
             if (currentChar == '\n') {
                 request->version[stageIndex] = '\0';
                 stage = 3;
@@ -201,6 +206,53 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
             }
             request->version[stageIndex] = currentChar;
             stageIndex++;
+        }
+
+        else if (stage == 3) {
+            if (stageIndex >= HEADER_MAP_LENGTH) {
+                stage = 4;
+                stageIndex = 0;
+                continue;
+            }
+            // this checks for end of headers section
+            if (currentChar == '\r' && rawRequest[i + 1] == '\n' && rawRequest[i + 2] == '\r' && rawRequest[i + 3] == '\n') {
+                stage = 4;
+                stageIndex = 0;
+                continue;
+            }
+            if (currentChar == '\n') {
+                stageIndex++;
+                isKey = true;
+                request->headerMap[stageIndex].key[charIndex] = '\0';
+                charIndex=0;
+                continue;
+            }
+
+            if (currentChar == ' ') {
+                continue;
+            }
+
+            if (currentChar == ':' && isKey) {
+                request->headerMap[stageIndex].value[charIndex] = '\0';
+                charIndex = 0;
+                isKey = false;
+                continue;
+            }
+
+            if (isKey) {
+                request->headerMap[stageIndex].key[charIndex] = currentChar;
+                charIndex++;
+                continue;
+            }
+            request->headerMap[stageIndex].value[charIndex] = currentChar;
+            charIndex++;
+        }
+        else if (stage == 4) {
+            if (stageIndex == BODY_LENGTH - 1 || currentChar == '\0') {
+                request->body[stageIndex] = '\0';
+                return;
+            }
+            request->body[stageIndex] = currentChar;
         }
     }
 }

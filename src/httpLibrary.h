@@ -1,7 +1,10 @@
 #ifndef HTTP_LIBRARY_H
 #define HTTP_LIBRARY_H
 
+#define REQUEST_MAX_LENGTH 1000
 #define HEADER_MAP_LENGTH 50
+#define BODY_LENGTH 1000
+
 
 #include <stdlib.h>
 
