@@ -5,28 +5,38 @@
 
 int main(int argc, char *argv[])
 {
+    // allocate space for request struct
     HttpRequest* request = (HttpRequest*)malloc(sizeof(HttpRequest));
+    // allocate space for body of request
     request->body = (char*)malloc(BODY_LENGTH);
+    // allocate buffer to request into
+    char* requestBuffer = (char*)malloc(REQUEST_MAX_LENGTH + 1);
+
+    // setup all variables and "run" server
     HttpConfig config;
     setPort(&config, 8080);
     setupServer(&config);
-    char* requestBuffer = (char*)malloc(REQUEST_MAX_LENGTH + 1);
 
+    // get request
     size_t requestLength = getRequest(&config, requestBuffer, REQUEST_MAX_LENGTH);
-    //printf("request is :\n%s\n", requestBuffer);
-    parseRequest(requestBuffer, requestLength, request);
-    printf("Method is: %s\n", request->method);
-    printf("Path is: %s\n", request->path);
-    printf("Version is: %s\n", request->version);
-    for (int i = 0; i < HEADER_MAP_LENGTH; i++) {
-        printf("Header: %s -> %s\n", request->headerMap[i].key, request->headerMap[i].value);
-    }
-    printf("Body: %s\n", request->body);
 
+    // parse request
+    parseRequest(requestBuffer, requestLength, request);
+
+    //---------------
+    // DO YOUR STUFF
+    //---------------
+    
     char* response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello, World!";
+
+    // send response
     sendResponse(&config, response, strlen(response));
+
+    // "stop" server
     cleanupServer(&config);
 
+    // for now you are responsible for all allocations
+    // my plan is to mange this, trying to think of the best way to execute this
     free(request->body);
     free(request);
     free(requestBuffer);
