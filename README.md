@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
 ## Currently woking functions
 
 `int setupServer(HttpConfig* config);`  
-called once to initialize server
-`void cleanupServer(HttpConfig* config);` 
+called once to initialize server  
+`void cleanupServer(HttpConfig* config);`  
 called once you want to exit process  
 `void setPort(HttpConfig* config, int port);`  
 set port you want your web exposed on  
