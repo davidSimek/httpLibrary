@@ -1,0 +1,4 @@
+src/httpLibrary.c:3: warning: "WINDOWS" redefined
+    3 | #define WINDOWS
+      | 
+<command-line>: note: this is the location of the previous definition
