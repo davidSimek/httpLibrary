@@ -7,18 +7,19 @@ super simple http implementation with parser and serializer
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
 - [Usage](#usage)
+- [Currently working function](#currently woking functions)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
 
 ## Introduction
 
-I've often desired to explore server/client architecture, but faced the challenge of either repeatedly implementing HTTP functionality or relying on feature-rich libraries with more than necessary components. In response, I developed this solution. It offers a straightforward interface with heightened usability. With this tool, creating a basic HTTP server requires fewer than 10 lines of code, providing comprehensive control over the server's operations.
+I've often desired to experiment with server/client architecture, but faced the challenge of either repeatedly implementing HTTP functionality or relying on feature-rich libraries with more than necessary components. In response, I developed this solution. It offers a straightforward interface with heightened usability. With this tool, creating a basic HTTP server requires fewer than 10 lines of code, providing comprehensive control over the server's operations.
 
 ## Getting Started
 
 ### Prerequisites
 
-GNU/Linux or Widnows system (Windows in not tested yet)
+GNU/Linux or Widnows system (Windows should work, but it might not work as well)
 
 ## Usage
 
@@ -52,6 +53,26 @@ int main(int argc, char *argv[])
 }
 ```
 
+## Currently woking functions
+
+`int setupServer(HttpConfig* config);`  
+called once to initialize server
+-----
+`void cleanupServer(HttpConfig* config);` 
+called once you want to exit process  
+-----
+`void setPort(HttpConfig* config, int port);`  
+set port you want your web exposed on  
+-----
+`int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);`  
+access recieved request (blocking), returns lenght of that request  
+-----
+`void sendResponse(HttpConfig* config, char* response, size_t responseLength);`  
+sends response  
+-----
+`void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);`  
+parses raw http request into HttpRequest struct  
+-----
 ## Troubleshooting
 
 As this repo contains build script, you can compile with -g flag. Run `./build.sh` and it will guide you.
