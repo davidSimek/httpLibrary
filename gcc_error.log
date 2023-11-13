@@ -1,6 +1,0 @@
-cc1: fatal error: main.c: No such file or directory
-compilation terminated.
-cc1: fatal error: server.c: No such file or directory
-compilation terminated.
-cc1: fatal error: request.c: No such file or directory
-compilation terminated.
