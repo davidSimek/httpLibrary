@@ -7,7 +7,7 @@ super simple http implementation with parser and serializer
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-- [Currently working function](#currently woking functions)
+- [Currently working function](#working-stuff)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 }
 ```
 
-## Currently woking functions
+## Woking stuff
 
 `int setupServer(HttpConfig* config);`  
 called once to initialize server  
