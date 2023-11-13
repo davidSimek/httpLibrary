@@ -63,6 +63,7 @@ called once you want to exit process
 set port you want your web exposed on  
 `int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);`  
 access recieved request (blocking), returns lenght of that request  
+`void sendResponse(HttpConfig* config, char* response, size_t responseLength);`  
 sends response  
 `void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);`  
 parses raw http request into HttpRequest struct  
