@@ -1,7 +1,5 @@
 #include "httpLibrary.h"
 
-#define WINDOWS
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -159,6 +157,52 @@ void sendResponse(HttpConfig* config, char* response, size_t responseLength) {
 #endif
 
 // these should be same for linux and windows
-void parseRequest(const HttpRequest* request, char* output, size_t bufferSize);
-void serializeResponse(char* input, const HttpResponse* response, size_t bufferSize);
+void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request) {
+    // stage:
+    //      0 -> method,
+    //      1 -> path
+    //      2 -> version
+    //      3 -> haeders
+    //      4 -> body
+    int stage = 0;
+    // index starting from 0 in each stage
+    int stageIndex;
+    for (int i = 0; i < rawRequestLength; i++) {
+        char currentChar = rawRequest[i];
+
+        if (stage == 0) {
+            if (currentChar == ' ') {
+                request->method[stageIndex] = '\0';
+                stage = 1;
+                stageIndex = 0;
+                continue;
+            }
+            request->method[stageIndex] = currentChar;
+            stageIndex++;
+        }
+
+        if (stage == 1) {
+            if (currentChar == ' ') {
+                request->path[stageIndex] = '\0';
+                stage = 2;
+                stageIndex = 0;
+                continue;
+            }
+            request->path[stageIndex] = currentChar;
+            stageIndex++;
+        }
+
+        if (stage == 2) {
+            if (currentChar == '\n') {
+                request->version[stageIndex] = '\0';
+                stage = 3;
+                stageIndex = 0;
+                continue;
+            }
+            request->version[stageIndex] = currentChar;
+            stageIndex++;
+        }
+    }
+}
+void serializeResponse();
 

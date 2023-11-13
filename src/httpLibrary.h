@@ -1,6 +1,8 @@
 #ifndef HTTP_LIBRARY_H
 #define HTTP_LIBRARY_H
 
+#define HEADER_MAP_LENGTH 50
+
 #include <stdlib.h>
 
 #ifdef WINDOWS 
@@ -11,9 +13,18 @@
 #endif
 
 typedef struct {
+    char key[30];
+    char value[200];
+} Header;
+
+typedef Header HeaderMap[HEADER_MAP_LENGTH];
+
+typedef struct {
     char method[10];
     char path[200];
     char version[10];
+    HeaderMap headerMap;
+    char* body;
 } HttpRequest;
 
 typedef struct {
@@ -49,12 +60,10 @@ int setupServer(HttpConfig* config);
 void cleanupServer(HttpConfig* config);
 void setPort(HttpConfig* config, int port);
 
-// in
 int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);
-void parseRequest(const HttpRequest* request, char* output, size_t bufferSize);
-
-// out
-void serializeResponse(char* input, const HttpResponse* response, size_t bufferSize);
 void sendResponse(HttpConfig* config, char* response, size_t responseLength);
+
+void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);
+void serializeResponse();
 
 #endif
