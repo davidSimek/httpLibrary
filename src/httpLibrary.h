@@ -56,7 +56,6 @@ typedef struct {
 } HttpConfig;   
 #endif
 
-// setup
 int createServer(HttpConfig* config, int port);
 void deleteServer(HttpConfig* config);
 void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);
