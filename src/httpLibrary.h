@@ -2,7 +2,6 @@
 #define HTTP_LIBRARY_H
 
 #define REQUEST_MAX_LENGTH 1000
-#define HEADER_MAP_LENGTH 50
 #define BODY_LENGTH 1000
 
 
@@ -20,13 +19,13 @@ typedef struct {
     char value[200];
 } Header;
 
-typedef Header HeaderMap[HEADER_MAP_LENGTH];
 
 typedef struct {
     char method[10];
     char path[200];
     char version[10];
-    HeaderMap headerMap;
+    Header* headerMap;
+    size_t headerMapSize;
     char* body;
 } HttpRequest;
 
@@ -59,9 +58,10 @@ typedef struct {
 #endif
 
 // setup
-int setupServer(HttpConfig* config);
+int setupServer(HttpConfig* config, int port);
 void cleanupServer(HttpConfig* config);
-void setPort(HttpConfig* config, int port);
+void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);
+void deleteRequest(HttpRequest* request);
 
 int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);
 void sendResponse(HttpConfig* config, char* response, size_t responseLength);

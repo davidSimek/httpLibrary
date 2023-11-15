@@ -1,3 +1,5 @@
+#define WINDOWS
+
 #include "httpLibrary.h"
 
 #include <stdio.h>
@@ -13,14 +15,12 @@
 #endif
 
 #ifndef WINDOWS
-void setPort(HttpConfig* config, int port) {
-    config->port = port;
-}
 
 // -1 == couldn't create socket
 // -2 == couldn't bind socket
 // -3 == cannot listen for connections
-int setupServer(HttpConfig* config) {
+int setupServer(HttpConfig* config, int port) {
+    config->port = port;
     config->clientAddressLength = sizeof(config->clientAddress);
 
     if ((config->serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -77,15 +77,11 @@ void sendResponse(HttpConfig* config, char* response, size_t responseLength) {
 
 #else
 
-
-void setPort(HttpConfig* config, int port) {
-    config->port = port;
-}
-
 // -1 == couldn't create socket
 // -2 == couldn't bind socket
 // -3 == cannot listen for connections
-int setupServer(HttpConfig* config) {
+int setupServer(HttpConfig* config, int port) {
+    config->port = port;
     config->clientAddressLength = sizeof(config->clientAddress);
 
     // Initialize Winsock
@@ -209,7 +205,7 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
         }
 
         else if (stage == 3) {
-            if (stageIndex >= HEADER_MAP_LENGTH) {
+            if (stageIndex >= request->headerMapSize) {
                 stage = 4;
                 stageIndex = 0;
                 continue;
@@ -257,5 +253,18 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
         }
     }
 }
+void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody) {
+    request->headerMapSize = maxHeaderCount;
+
+    request->headerMap = (Header*)malloc(sizeof(Header) * (request->headerMapSize + 1));
+
+    request->body = (char*)malloc(maxSizeOfBody);
+}
+
+void deleteRequest(HttpRequest *request) {
+    free(request->headerMap);
+    free(request->body);
+}
+
 void serializeResponse();
 
