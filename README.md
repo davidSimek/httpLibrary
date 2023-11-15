@@ -15,21 +15,26 @@ This C library provides a simple and easy-to-use framework for creating HTTP ser
 
 ## API Reference
 
-### `int setupServer(HttpConfig* config);`
+### `int createServer(HttpConfig* config, int port);`
 
-Initialize and set up the HTTP server with the provided configuration.
+Initialize and set up the HTTP server running on provided port.
 
-### `void cleanupServer(HttpConfig* config);`
+### `void deleteServer(HttpConfig* config);`
 
 Clean up and release resources associated with the HTTP server.
-
-### `void setPort(HttpConfig* config, int port);`
-
-Set the port on which the server will listen for incoming connections.
 
 ### `int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);`
 
 Receive an HTTP request from the client and store it in the provided buffer.
+
+
+### `void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);`
+
+Initialize structure where request is parsed into.
+
+### `void deleteRequest(HttpRequest* request);`
+
+Clean up structure where for request.
 
 ### `void sendResponse(HttpConfig* config, char* response, size_t responseLength);`
 
@@ -111,7 +116,7 @@ void displayRequest(HttpRequest* request) {
         if (request->headerMap[i].key[0] == 0)
             break;
 
-        printf("key %s: value: %s\n", request->headerMap[i].key, request->headerMap[i].value);
+        printf("Header(%d) %s : %s\n", i, request->headerMap[i].key, request->headerMap[i].value);
     }
 
     printf("body: %s", request->body);

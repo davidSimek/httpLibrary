@@ -57,7 +57,7 @@ void displayRequest(HttpRequest* request) {
         if (request->headerMap[i].key[0] == 0)
             break;
 
-        printf("key %s: value: %s\n", request->headerMap[i].key, request->headerMap[i].value);
+        printf("Header(%d) %s : %s\n", i, request->headerMap[i].key, request->headerMap[i].value);
     }
 
     printf("body: %s", request->body);
