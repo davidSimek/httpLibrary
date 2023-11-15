@@ -65,6 +65,7 @@ int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);
 void sendResponse(HttpConfig* config, char* response, size_t responseLength);
 
 void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);
-void serializeResponse();
+
+// unimplemented void serializeResponse();
 
 #endif
