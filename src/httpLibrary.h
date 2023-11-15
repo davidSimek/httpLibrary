@@ -58,8 +58,8 @@ typedef struct {
 #endif
 
 // setup
-int setupServer(HttpConfig* config, int port);
-void cleanupServer(HttpConfig* config);
+int createServer(HttpConfig* config, int port);
+void deleteServer(HttpConfig* config);
 void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);
 void deleteRequest(HttpRequest* request);
 

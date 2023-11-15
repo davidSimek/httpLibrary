@@ -1,5 +1,3 @@
-#define WINDOWS
-
 #include "httpLibrary.h"
 
 #include <stdio.h>
@@ -19,7 +17,7 @@
 // -1 == couldn't create socket
 // -2 == couldn't bind socket
 // -3 == cannot listen for connections
-int setupServer(HttpConfig* config, int port) {
+int createServer(HttpConfig* config, int port) {
     config->port = port;
     config->clientAddressLength = sizeof(config->clientAddress);
 
@@ -45,7 +43,7 @@ int setupServer(HttpConfig* config, int port) {
     printf("Server listening on port %d\n", config->port);
     return 1;
 }
-void cleanupServer(HttpConfig* config) {
+void deleteServer(HttpConfig* config) {
     close(config->serverSocket);
 }
 
@@ -80,7 +78,7 @@ void sendResponse(HttpConfig* config, char* response, size_t responseLength) {
 // -1 == couldn't create socket
 // -2 == couldn't bind socket
 // -3 == cannot listen for connections
-int setupServer(HttpConfig* config, int port) {
+int createServer(HttpConfig* config, int port) {
     config->port = port;
     config->clientAddressLength = sizeof(config->clientAddress);
 
@@ -119,7 +117,7 @@ int setupServer(HttpConfig* config, int port) {
     return 1;
 }
 
-void cleanupServer(HttpConfig* config) {
+void deleteServer(HttpConfig* config) {
     closesocket(config->serverSocket);
     WSACleanup();
 }
