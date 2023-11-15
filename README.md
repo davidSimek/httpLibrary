@@ -60,6 +60,8 @@ Parse a raw HTTP request and populate the provided `HttpRequest` structure.
 
 #define REQUEST_MAX_LENGTH 1000
 
+void displayRequest(HttpRequest* request);
+
 int main(int argc, char *argv[])
 {
     // raw request is read into this
@@ -81,6 +83,10 @@ int main(int argc, char *argv[])
 
     // parse raw request into request structure
     parseRequest(requestBuffer, requestLength, &request);
+
+    // this is not part of library
+    // example of displaying parsed request
+    displayRequest(&request);
     
     // generate response
     // you will be able to use HttpResponse structure with serializeResponse() function to create response easily, not implemented for now.
@@ -95,6 +101,41 @@ int main(int argc, char *argv[])
     free(requestBuffer);
     return 0;
 }
+
+void displayRequest(HttpRequest* request) {
+    printf("METHOD:  %s\n", request->method);
+    printf("PATH:    %s\n", request->path);
+    printf("VERSION: %s\n", request->version);
+
+    for (int i = 0; i < request->headerMapSize; i++) {
+        if (request->headerMap[i].key[0] == 0)
+            break;
+
+        printf("key %s: value: %s\n", request->headerMap[i].key, request->headerMap[i].value);
+    }
+
+    printf("body: %s", request->body);
+}
+```  
+### logs it gave me:  
+```
+Server listening on port 8080
+Connection accepted from 127.0.0.1:35488
+Successfully recieved request.
+METHOD:  GET
+PATH:    /
+VERSION: HTTP/1.1
+key Host: value: localhost:8080
+key User-Agent: value: Mozilla/5.0(X11;Linuxx86_64;rv:109.0)Gecko/20100101Firefox/116.0
+key Accept: value: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+key Accept-Language: value: cs,sk;q=0.8,en-US;q=0.5,en;q=0.3
+key Accept-Encoding: value: gzip,deflate,br
+key Connection: value: keep-alive
+key Upgrade-Insecure-Requests: value: 1
+key Sec-Fetch-Dest: value: document
+key Sec-Fetch-Mode: value: navigate
+key Sec-Fetch-Site: value: same-origin
+body: 
 ```
 
 ## License

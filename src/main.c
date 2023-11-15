@@ -6,6 +6,8 @@
 
 #define REQUEST_MAX_LENGTH 1000
 
+void displayRequest(HttpRequest* request);
+
 int main(int argc, char *argv[])
 {
     // raw request is read into this
@@ -27,6 +29,10 @@ int main(int argc, char *argv[])
 
     // parse raw request into request structure
     parseRequest(requestBuffer, requestLength, &request);
+
+    // this is not part of library
+    // example of displaying parsed request
+    displayRequest(&request);
     
     // generate response
     // you will be able to use HttpResponse structure with serializeResponse() function to create response easily, not implemented for now.
@@ -40,4 +46,19 @@ int main(int argc, char *argv[])
     deleteRequest(&request);
     free(requestBuffer);
     return 0;
+}
+
+void displayRequest(HttpRequest* request) {
+    printf("METHOD:  %s\n", request->method);
+    printf("PATH:    %s\n", request->path);
+    printf("VERSION: %s\n", request->version);
+
+    for (int i = 0; i < request->headerMapSize; i++) {
+        if (request->headerMap[i].key[0] == 0)
+            break;
+
+        printf("key %s: value: %s\n", request->headerMap[i].key, request->headerMap[i].value);
+    }
+
+    printf("body: %s", request->body);
 }
