@@ -44,16 +44,6 @@ Send an HTTP response to the client based on the provided response content.
 
 Parse a raw HTTP request and populate the provided `HttpRequest` structure.
 
-## Getting Started
-
-1. Include the library in your C project.
-2. Initialize the server using `setupServer`.
-3. Configure the server using `setPort`.
-4. Handle incoming requests using `getRequest`.
-5. Send response base on your own needs `sendResponse`.
-6. Process and generate responses as needed.
-7. Clean up resources with `cleanupServer` when done.
-
 ## Example
 
 ```c
