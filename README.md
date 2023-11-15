@@ -1,4 +1,6 @@
 # HTTP Library for C
+### !!!
+It does't compile library for now, it is easier for me to have it like this. I want to implement function for response serialization, and then transfer it into library.
 
 ## Overview
 
