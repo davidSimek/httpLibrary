@@ -274,8 +274,6 @@ void deleteResponse(HttpResponse* response) {
     free(response->headerMap);
 }
 
-void serializeResponse();
-
 void setVersion(HttpResponse* response, char* version) {
     size_t maxSize = sizeof(response->version) - 1;
     strncpy(response->version, version, maxSize);
@@ -306,9 +304,134 @@ void setHeader(Header* headerMap, int index, char* key, char* value) {
 
 void fillResponse(HttpResponse* response, char* version, char* status, char* reasonPhrase, Header* headerMap, size_t headerMapSize, char* body) {
     setVersion(response, version);
-    setStatus(response, version);
+    setStatus(response, status);
     setReasonPhrase(response, reasonPhrase);
     response->headerMapSize = headerMapSize;
     response->headerMap = headerMap;
     response->body = body;
+}
+
+size_t serializeResponse(HttpResponse* response, size_t responseLength, char* responseBuffer) {
+    int index = 0;
+    // stage:
+    //      0 -> version
+    //      1 -> statuse
+    //      2 -> phrase
+    //      3 -> haeders
+    //      4 -> body
+    int stage = 0;
+    // index starting from 0 in each stage
+    int stageIndex = 0;
+
+    bool isKey = true;
+
+    int charIndex = 0;
+
+    while (index < responseLength - 1) {
+        if (stage == 0) {
+            char currentChar = response->version[stageIndex];
+            if (currentChar == 0) {
+                responseBuffer[index] = ' ';
+                stageIndex = 0;
+                stage = 1;
+                index++;
+                continue;
+            }
+            responseBuffer[index] = currentChar;
+            index++;
+            stageIndex++;
+            continue;
+        }
+        else if (stage == 1) {
+            char currentChar = response->status[stageIndex];
+            if (currentChar == 0) {
+                responseBuffer[index] = ' ';
+                stageIndex = 0;
+                stage = 2;
+                index++;
+                continue;
+            }
+            responseBuffer[index] = currentChar;
+            index++;
+            stageIndex++;
+            continue;
+        }
+        else if (stage == 2) {
+            char currentChar = response->reasonPhrase[stageIndex];
+            if (currentChar == 0) {
+                responseBuffer[index] = '\r';
+                index++;
+                responseBuffer[index] = '\n';
+                index++;
+                stageIndex = 0;
+                stage = 3;
+                continue;
+            }
+            responseBuffer[index] = currentChar;
+            index++;
+            stageIndex++;
+            continue;
+        }
+        else if (stage == 3) {
+            if (isKey) {
+                char currentChar = response->headerMap[stageIndex].key[charIndex];
+                if ((charIndex == 0 && currentChar == 0) || (stageIndex > response->headerMapSize)) {
+                    responseBuffer[index] = '\r';
+                    index++;
+                    responseBuffer[index] = '\n';
+                    index++;
+                    responseBuffer[index] = '\r';
+                    index++;
+                    responseBuffer[index] = '\n';
+                    index++;
+                    stage = 4;
+                    stageIndex = 0;
+                    charIndex = 0;
+                    continue;
+                }
+                if (currentChar == 0) {
+                    responseBuffer[index] = ':';;
+                    index++;
+                    responseBuffer[index] = ' ';;
+                    index++;
+                    isKey = false;
+                    charIndex = 0;
+                    continue;
+                }
+                responseBuffer[index] = currentChar;
+                index++;
+                charIndex++;
+                continue;
+            } else {
+                char currentChar = response->headerMap[stageIndex].value[charIndex];
+                if (currentChar == 0) {
+                    responseBuffer[index] = '\r';
+                    index++;
+                    responseBuffer[index] = '\n';
+                    index++;
+                    isKey = true;
+                    charIndex = 0;
+                    stageIndex++;
+                    continue;
+                }
+                responseBuffer[index] = currentChar;
+                index++;
+                charIndex++;
+                continue;
+            }
+        }
+        else if (stage == 4) {
+            char currentChar = response->body[stageIndex];
+            if (currentChar == 0) {
+                responseBuffer[index] = 0;
+                break;
+            }
+            responseBuffer[index] = response->body[stageIndex];
+            index++;
+            stageIndex++;
+            continue;
+        }
+        break;
+    }
+    return index;
 }

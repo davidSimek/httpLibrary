@@ -20,41 +20,31 @@ int main(int argc, char *argv[])
     createResponse(&response, 100, 1000);
     HttpConfig config;
     createServer(&config, 8080);
+    Header* headerMap = (Header*)malloc(sizeof(Header) * 2);
 
-    size_t requestLength = getRequest(&config, requestBuffer, REQUEST_MAX_LENGTH);
+    while (true) {
+        size_t requestLength = getRequest(&config, requestBuffer, REQUEST_MAX_LENGTH);
+        setHeader(headerMap, 0, "thisServerIsMadyBy", "David Simek");
 
-    parseRequest(requestBuffer, requestLength, &request);
-
-    displayRequest(&request);
-    
-    Header* headerMap = (Header*)malloc(sizeof(Header) * 1);
-    setHeader(headerMap, 0, "name", "gaga");
-    fillResponse(&response, "HTTP/1:1", "222", "LOL", headerMap, 1, "<h1>hello this is server</h1>");
-
-    char* rawResponse = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello, World!";
-    sendResponse(&config, rawResponse, strlen(rawResponse));
+        parseRequest(requestBuffer, requestLength, &request);
+        
+        if (strcmp(request.path, "/lol") == 0) {
+            fillResponse(&response, "HTTP/1.1", "200", "OK", headerMap, 1, "<h1>you are in lol section now now</h1>");
+        } else {
+            fillResponse(&response, "HTTP/1.1", "200", "OK", headerMap, 1, "<h1>this is HOME</h1>");
+        }
+        printf("RAW RESPONSE: %s\n", responseBuffer);
+        size_t responseSize = serializeResponse(&response, RESPONSE_MAX_LENGTH, responseBuffer);
+        sendResponse(&config, responseBuffer, responseSize);
+    }
 
 
     deleteServer(&config);
     deleteRequest(&request);
     deleteResponse(&response);
 
+    free(headerMap);
     free(requestBuffer);
     free(responseBuffer);
     return 0;
-}
-
-void displayRequest(HttpRequest* request) {
-    printf("METHOD:  %s\n", request->method);
-    printf("PATH:    %s\n", request->path);
-    printf("VERSION: %s\n", request->version);
-
-    for (int i = 0; i < request->headerMapSize; i++) {
-        if (request->headerMap[i].key[0] == 0)
-            break;
-
-        printf("Header(%d) %s : %s\n", i, request->headerMap[i].key, request->headerMap[i].value);
-    }
-
-    printf("body: %s", request->body);
 }

@@ -78,6 +78,7 @@ void setReasonPhrase(HttpResponse* response, char* reasonPhrase);
 void setHeader(Header* response, int index, char* key, char* value);
 
 void fillResponse(HttpResponse* response, char* version, char* status, char* reasonPhrase, Header* headerMap, size_t headerMapSize, char* body);
-// unimplemented void serializeResponse();
+
+size_t serializeResponse(HttpResponse* response, size_t responseLength, char* responseBuffer);
 
 #endif
