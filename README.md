@@ -114,22 +114,23 @@ int main(int argc, char *argv[])
 ### logs it gave me:  
 ```
 Server listening on port 8080
-Connection accepted from 127.0.0.1:35488
+Connection accepted from 127.0.0.1:48090
 Successfully recieved request.
-METHOD:  GET
-PATH:    /
-VERSION: HTTP/1.1
-key Host: value: localhost:8080
-key User-Agent: value: Mozilla/5.0(X11;Linuxx86_64;rv:109.0)Gecko/20100101Firefox/116.0
-key Accept: value: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
-key Accept-Language: value: cs,sk;q=0.8,en-US;q=0.5,en;q=0.3
-key Accept-Encoding: value: gzip,deflate,br
-key Connection: value: keep-alive
-key Upgrade-Insecure-Requests: value: 1
-key Sec-Fetch-Dest: value: document
-key Sec-Fetch-Mode: value: navigate
-key Sec-Fetch-Site: value: same-origin
-body: 
+RAW RESPONSE: 
+Connection accepted from 127.0.0.1:40620
+Successfully recieved request.
+RAW RESPONSE: HTTP/1.1 200 OK
+thisServerIsMadyBy: David Simek
+
+
+<h1>this is HOME</h1>
+Connection accepted from 127.0.0.1:40630
+Successfully recieved request.
+RAW RESPONSE: HTTP/1.1 200 OK
+thisServerIsMadyBy: David Simek
+
+
+<h1>you are in lol section now now</h1>
 ```
 
 ## License
