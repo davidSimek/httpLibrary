@@ -114,23 +114,22 @@ int main(int argc, char *argv[])
 ### logs it gave me:  
 ```
 Server listening on port 8080
-Connection accepted from 127.0.0.1:48090
-Successfully recieved request.
-RAW RESPONSE: 
-Connection accepted from 127.0.0.1:40620
+Connection accepted from 127.0.0.1:35242
 Successfully recieved request.
 RAW RESPONSE: HTTP/1.1 200 OK
 thisServerIsMadyBy: David Simek
 
 
 <h1>this is HOME</h1>
-Connection accepted from 127.0.0.1:40630
+----------------------
+Connection accepted from 127.0.0.1:34092
 Successfully recieved request.
 RAW RESPONSE: HTTP/1.1 200 OK
 thisServerIsMadyBy: David Simek
 
 
 <h1>you are in lol section now now</h1>
+----------------------
 ```
 
 ## License
