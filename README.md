@@ -13,7 +13,7 @@ This C library provides a simple and easy-to-use framework for creating HTTP ser
 - **Cross-Platform**: Run your server seamlessly on both Linux and Windows.
 - **Experimentation**: Ideal for students and developers looking to experiment with HTTP server.
 - **Minimal Dependencies**: No external libraries are required beyond the system defaults.
-- **Parsing and Serialization**: The library includes functions for parsing raw HTTP requests and will include function for serializing HTTP responses.
+- **Parsing and Serialization**: The library includes functions for parsing raw HTTP requests and serializing HTTP responses.
 
 ## API Reference
 

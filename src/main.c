@@ -3,14 +3,22 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <signal.h>
 
 #define REQUEST_MAX_LENGTH 1000
 #define RESPONSE_MAX_LENGTH 2000
 
-void displayRequest(HttpRequest* request);
+volatile bool shouldRun = true;
+
+void handleCtrlC(int signum) {
+    printf("Stopping server.");
+    shouldRun = false;
+}
 
 int main(int argc, char *argv[])
 {
+    signal(SIGINT, handleCtrlC);
+
     char* requestBuffer = (char*)malloc(REQUEST_MAX_LENGTH + 1);
     char* responseBuffer = (char*)malloc(RESPONSE_MAX_LENGTH + 1);
 
@@ -22,7 +30,7 @@ int main(int argc, char *argv[])
     createServer(&config, 8080);
     Header* headerMap = (Header*)malloc(sizeof(Header) * 2);
 
-    while (true) {
+    while (shouldRun) {
         size_t requestLength = getRequest(&config, requestBuffer, REQUEST_MAX_LENGTH);
         setHeader(headerMap, 0, "thisServerIsMadyBy", "David Simek");
 
@@ -43,7 +51,6 @@ int main(int argc, char *argv[])
     deleteRequest(&request);
     deleteResponse(&response);
 
-    free(headerMap);
     free(requestBuffer);
     free(responseBuffer);
     return 0;

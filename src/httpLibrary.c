@@ -26,6 +26,12 @@ int createServer(HttpConfig* config, int port) {
         return -1;
     }
 
+    int reuse = 1;
+    if (setsockopt(config->serverSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse)) < 0) {
+        perror("setsockopt(SO_REUSEADDR) failed");
+        return -4;
+    }
+
     config->serverAddress.sin_family = AF_INET;
     config->serverAddress.sin_addr.s_addr = INADDR_ANY;
     config->serverAddress.sin_port = htons(config->port);
@@ -93,6 +99,14 @@ int createServer(HttpConfig* config, int port) {
         perror("Socket couldn't be created.");
         WSACleanup();
         return -1;
+    }
+
+    int reuse = 1;
+    if (setsockopt(config->serverSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse)) == SOCKET_ERROR) {
+        perror("setsockopt(SO_REUSEADDR) failed");
+        closesocket(config->serverSocket);
+        WSACleanup();
+        return -4;
     }
 
     config->serverAddress.sin_family = AF_INET;
