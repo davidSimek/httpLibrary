@@ -17,34 +17,45 @@ This C library provides a simple and easy-to-use framework for creating HTTP ser
 
 ## API Reference
 
-### `int createServer(HttpConfig* config, int port);`
+#### int createServer(HttpConfig* config, int port);
+sets up HttpConfig
+#### void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);
+sets up HttpRequest
+#### void createResponse(HttpResponse* response, size_t maxHeaderCount, size_t maxSizeOfBody);
+sets up HttpResponse
 
-Initialize and set up the HTTP server running on provided port.
+#### void deleteServer(HttpConfig* config);
+deletes HttpConfig
+#### void deleteRequest(HttpRequest* request);
+deletes HttpRequest
+#### void deleteResponse(HttpResponse* response);
+deletes HttpResponse
 
-### `void deleteServer(HttpConfig* config);`
+#### int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);
+copies request into char* request and returns length
+#### void sendResponse(HttpConfig* config, char* response, size_t responseLength);
+sends response from char* response
 
-Clean up and release resources associated with the HTTP server.
+#### void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);
+parses raw request into HttpRequest structure
 
-### `int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);`
+#### void setVersion(HttpResponse* response, char* version);
+#### void setStatus(HttpResponse* response, char* status);
+#### void setReasonPhrase(HttpResponse* response, char* reasonPhrase);
+you will probably not need these  
+these set single fields of HttpResponse
 
-Receive an HTTP request from the client and store it in the provided buffer.
+#### void setHeader(Header* response, int index, char* key, char* value);
+sets header in headerMap  
+you are responsible for array overflow here  
+just be careful with index
 
+#### void fillResponse(HttpResponse* response, char* version, char* status, char* reasonPhrase, Header* headerMap, size_t headerMapSize, char* body);
+this fills response struct in really accessible way
 
-### `void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);`
+#### size_t serializeResponse(HttpResponse* response, size_t responseLength, char* responseBuffer);
+this serializes HttpResponse struct into responseBuffe so you can send it
 
-Initialize structure where request is parsed into.
-
-### `void deleteRequest(HttpRequest* request);`
-
-Clean up structure where for request.
-
-### `void sendResponse(HttpConfig* config, char* response, size_t responseLength);`
-
-Send an HTTP response to the client based on the provided response content.
-
-### `void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);`
-
-Parse a raw HTTP request and populate the provided `HttpRequest` structure.
 
 ## Example
 
@@ -56,62 +67,48 @@ Parse a raw HTTP request and populate the provided `HttpRequest` structure.
 #include <stdbool.h>
 
 #define REQUEST_MAX_LENGTH 1000
+#define RESPONSE_MAX_LENGTH 2000
 
 void displayRequest(HttpRequest* request);
 
 int main(int argc, char *argv[])
 {
-    // raw request is read into this
     char* requestBuffer = (char*)malloc(REQUEST_MAX_LENGTH + 1);
+    char* responseBuffer = (char*)malloc(RESPONSE_MAX_LENGTH + 1);
 
-    // create structure to parse raw data into
     HttpRequest request;
     createRequest(&request, 100, 1000);
-
-    // create structure where all server data are stored and create server
+    HttpResponse response;
+    createResponse(&response, 100, 1000);
     HttpConfig config;
     createServer(&config, 8080);
+    Header* headerMap = (Header*)malloc(sizeof(Header) * 2);
 
-    // variable for storing count of bytes read
-    size_t requestLength;
+    while (true) {
+        size_t requestLength = getRequest(&config, requestBuffer, REQUEST_MAX_LENGTH);
+        setHeader(headerMap, 0, "thisServerIsMadyBy", "David Simek");
 
-    // read request into buffer
-    requestLength = getRequest(&config, requestBuffer, REQUEST_MAX_LENGTH);
-
-    // parse raw request into request structure
-    parseRequest(requestBuffer, requestLength, &request);
-
-    // this is not part of library
-    // example of displaying parsed request
-    displayRequest(&request);
-    
-    // generate response
-    // you will be able to use HttpResponse structure with serializeResponse() function to create response easily, not implemented for now.
-    char* response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello, World!";
-
-    // send raw response to client
-    sendResponse(&config, response, strlen(response));
-
-    // clean-up
-    deleteServer(&config);
-    deleteRequest(&request);
-    free(requestBuffer);
-    return 0;
-}
-
-void displayRequest(HttpRequest* request) {
-    printf("METHOD:  %s\n", request->method);
-    printf("PATH:    %s\n", request->path);
-    printf("VERSION: %s\n", request->version);
-
-    for (int i = 0; i < request->headerMapSize; i++) {
-        if (request->headerMap[i].key[0] == 0)
-            break;
-
-        printf("Header(%d) %s : %s\n", i, request->headerMap[i].key, request->headerMap[i].value);
+        parseRequest(requestBuffer, requestLength, &request);
+        
+        if (strcmp(request.path, "/lol") == 0) {
+            fillResponse(&response, "HTTP/1.1", "200", "OK", headerMap, 1, "<h1>you are in lol section now now</h1>");
+        } else {
+            fillResponse(&response, "HTTP/1.1", "200", "OK", headerMap, 1, "<h1>this is HOME</h1>");
+        }
+        printf("RAW RESPONSE: %s\n", responseBuffer);
+        size_t responseSize = serializeResponse(&response, RESPONSE_MAX_LENGTH, responseBuffer);
+        sendResponse(&config, responseBuffer, responseSize);
     }
 
-    printf("body: %s", request->body);
+
+    deleteServer(&config);
+    deleteRequest(&request);
+    deleteResponse(&response);
+
+    free(headerMap);
+    free(requestBuffer);
+    free(responseBuffer);
+    return 0;
 }
 ```  
 ### logs it gave me:  
