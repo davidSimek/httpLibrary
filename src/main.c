@@ -5,46 +5,42 @@
 #include <stdbool.h>
 
 #define REQUEST_MAX_LENGTH 1000
+#define RESPONSE_MAX_LENGTH 2000
 
 void displayRequest(HttpRequest* request);
 
 int main(int argc, char *argv[])
 {
-    // raw request is read into this
     char* requestBuffer = (char*)malloc(REQUEST_MAX_LENGTH + 1);
+    char* responseBuffer = (char*)malloc(RESPONSE_MAX_LENGTH + 1);
 
-    // create structure to parse raw data into
     HttpRequest request;
     createRequest(&request, 100, 1000);
-
-    // create structure where all server data are stored and create server
+    HttpResponse response;
+    createResponse(&response, 100, 1000);
     HttpConfig config;
     createServer(&config, 8080);
 
-    // variable for storing count of bytes read
-    size_t requestLength;
+    size_t requestLength = getRequest(&config, requestBuffer, REQUEST_MAX_LENGTH);
 
-    // read request into buffer
-    requestLength = getRequest(&config, requestBuffer, REQUEST_MAX_LENGTH);
-
-    // parse raw request into request structure
     parseRequest(requestBuffer, requestLength, &request);
 
-    // this is not part of library
-    // example of displaying parsed request
     displayRequest(&request);
     
-    // generate response
-    // you will be able to use HttpResponse structure with serializeResponse() function to create response easily, not implemented for now.
-    char* response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello, World!";
+    Header* headerMap = (Header*)malloc(sizeof(Header) * 1);
+    setHeader(headerMap, 0, "name", "gaga");
+    fillResponse(&response, "HTTP/1:1", "222", "LOL", headerMap, 1, "<h1>hello this is server</h1>");
 
-    // send raw response to client
-    sendResponse(&config, response, strlen(response));
+    char* rawResponse = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello, World!";
+    sendResponse(&config, rawResponse, strlen(rawResponse));
 
-    // clean-up
+
     deleteServer(&config);
     deleteRequest(&request);
+    deleteResponse(&response);
+
     free(requestBuffer);
+    free(responseBuffer);
     return 0;
 }
 

@@ -32,6 +32,9 @@ typedef struct {
     char version[10];
     char status[10];
     char reasonPhrase[10];
+    Header* headerMap;
+    size_t headerMapSize;
+    char* body;
 } HttpResponse;
 
 #ifdef WINDOWS
@@ -57,15 +60,24 @@ typedef struct {
 #endif
 
 int createServer(HttpConfig* config, int port);
-void deleteServer(HttpConfig* config);
 void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);
+void createResponse(HttpResponse* response, size_t maxHeaderCount, size_t maxSizeOfBody);
+
+void deleteServer(HttpConfig* config);
 void deleteRequest(HttpRequest* request);
+void deleteResponse(HttpResponse* response);
 
 int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);
 void sendResponse(HttpConfig* config, char* response, size_t responseLength);
 
 void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);
 
+void setVersion(HttpResponse* response, char* version);
+void setStatus(HttpResponse* response, char* status);
+void setReasonPhrase(HttpResponse* response, char* reasonPhrase);
+void setHeader(Header* response, int index, char* key, char* value);
+
+void fillResponse(HttpResponse* response, char* version, char* status, char* reasonPhrase, Header* headerMap, size_t headerMapSize, char* body);
 // unimplemented void serializeResponse();
 
 #endif

@@ -259,10 +259,56 @@ void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOf
     request->body = (char*)malloc(maxSizeOfBody);
 }
 
-void deleteRequest(HttpRequest *request) {
+void createResponse(HttpResponse* response, size_t maxHeaderCount, size_t maxSizeOfBody) {
+    response->headerMapSize = maxHeaderCount;
+
+    response->headerMap = (Header*)malloc(sizeof(Header) * (response->headerMapSize + 1));
+}
+
+void deleteRequest(HttpRequest* request) {
     free(request->headerMap);
     free(request->body);
 }
 
+void deleteResponse(HttpResponse* response) {
+    free(response->headerMap);
+}
+
 void serializeResponse();
 
+void setVersion(HttpResponse* response, char* version) {
+    size_t maxSize = sizeof(response->version) - 1;
+    strncpy(response->version, version, maxSize);
+    response->version[maxSize] = '\0';
+}
+
+void setStatus(HttpResponse* response, char* status) {
+    size_t maxSize = sizeof(response->status) - 1;
+    strncpy(response->status, status, maxSize);
+    response->status[maxSize] = '\0';
+}
+
+void setReasonPhrase(HttpResponse* response, char* reasonPhrase) {
+    size_t maxSize = sizeof(response->reasonPhrase) - 1;
+    strncpy(response->reasonPhrase, reasonPhrase, maxSize);
+    response->reasonPhrase[maxSize] = '\0';
+}
+
+void setHeader(Header* headerMap, int index, char* key, char* value) {
+    size_t maxSize = sizeof(headerMap[index].key) - 1;
+    strncpy(headerMap[index].key, key, maxSize);
+    headerMap[index].key[maxSize] = '\0';
+
+    maxSize = sizeof(headerMap[index].value) - 1;
+    strncpy(headerMap[index].value, value, maxSize);
+    headerMap[index].value[maxSize] = '\0';
+}
+
+void fillResponse(HttpResponse* response, char* version, char* status, char* reasonPhrase, Header* headerMap, size_t headerMapSize, char* body) {
+    setVersion(response, version);
+    setStatus(response, version);
+    setReasonPhrase(response, reasonPhrase);
+    response->headerMapSize = headerMapSize;
+    response->headerMap = headerMap;
+    response->body = body;
+}
