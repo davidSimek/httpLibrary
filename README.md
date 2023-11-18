@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
         } else {
             fillResponse(&response, "HTTP/1.1", "200", "OK", headerMap, 1, "<h1>this is HOME</h1>");
         }
-        printf("RAW RESPONSE: %s\n", responseBuffer);
         size_t responseSize = serializeResponse(&response, RESPONSE_MAX_LENGTH, responseBuffer);
+        printf("RAW RESPONSE: %s\n----------------------\n", responseBuffer);
         sendResponse(&config, responseBuffer, responseSize);
     }
 
