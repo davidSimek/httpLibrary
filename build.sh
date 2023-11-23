@@ -53,11 +53,12 @@ build_linux() {
         info "building with debug flags"
         # gcc -g -o out/http src/main.c src/httpLibrary.c 2> "$logFile"
         gcc -g -c src/httpLibrary.c -o out/httpLibrary.o
-        gcc -shared -o httpLibrary.a out/httpLibrary.o
+        gcc -g out/httpLibrary.o -o out/libhttpLibrary.a -nostartfiles
+        rm out/httpLibrary.o
     else
         # gcc -o out/http src/main.c src/httpLibrary.c 2> "$logFile"
         gcc -c src/httpLibrary.c -o out/httpLibrary.o
-        gcc -shared -o out/httpLibrary.a out/httpLibrary.o
+        gcc out/httpLibrary.o -o out/libhttpLibrary.a -nostartfiles
         rm out/httpLibrary.o
     fi
 
