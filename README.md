@@ -15,7 +15,7 @@ This C library provides a simple and easy-to-use framework for creating HTTP ser
 ## API Reference
 This is cut directly from httpLibrary.h.
 
-```
+```c
 // Represents Key-Value pair of HTTP header
 typedef struct {
     char key[30];
