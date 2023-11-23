@@ -1,7 +1,4 @@
 # HTTP Library for C
-### !!!
-It does't compile library for now, it is easier for me to have it like this. I want to implement function for response serialization, and then transfer it into library.
-
 ## Overview
 
 This C library provides a simple and easy-to-use framework for creating HTTP servers, parsing requests, and generating responses. The primary goal is to offer a lightweight solution for experimenting with HTTP server while providing enough control for you to make it YOUR way. The library is designed to be partly platform-independent, supporting both Linux and Windows environments. It has no dependencies on external libraries beyond what is provided by the system by default.
@@ -16,46 +13,97 @@ This C library provides a simple and easy-to-use framework for creating HTTP ser
 - **Parsing and Serialization**: The library includes functions for parsing raw HTTP requests and serializing HTTP responses.
 
 ## API Reference
+This is cut directly from httpLibrary.h.
 
-#### int createServer(HttpConfig* config, int port);
-sets up HttpConfig
-#### void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);
-sets up HttpRequest
-#### void createResponse(HttpResponse* response, size_t maxHeaderCount, size_t maxSizeOfBody);
-sets up HttpResponse
+```
+// Represents Key-Value pair of HTTP header
+typedef struct {
+    char key[30];
+    char value[200];
+} Header;
 
-#### void deleteServer(HttpConfig* config);
-deletes HttpConfig
-#### void deleteRequest(HttpRequest* request);
-deletes HttpRequest
-#### void deleteResponse(HttpResponse* response);
-deletes HttpResponse
 
-#### int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);
-copies request into char* request and returns length
-#### void sendResponse(HttpConfig* config, char* response, size_t responseLength);
-sends response from char* response
+// Represents HTTP request
+typedef struct {
+    char method[10];
+    char path[200];
+    char version[10];
+    Header* headerMap;
+    size_t headerMapSize;
+    char* body;
+    size_t maxSizeOfBody;
+} HttpRequest;
 
-#### void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);
-parses raw request into HttpRequest structure
+// Represents HTTP response
+typedef struct {
+    char version[10];
+    char status[10];
+    char reasonPhrase[10];
+    Header* headerMap;
+    size_t headerMapSize;
+    char* body;
+} HttpResponse;
 
-#### void setVersion(HttpResponse* response, char* version);
-#### void setStatus(HttpResponse* response, char* status);
-#### void setReasonPhrase(HttpResponse* response, char* reasonPhrase);
-you will probably not need these  
-these set single fields of HttpResponse
+// Represents HTTP server config for Windows
+typedef struct {
+    int port;
+    SOCKET serverSocket;  // Change from int to SOCKET
+    SOCKET clientSocket;  // Change from int to SOCKET
+    int maxConnections;
+    struct sockaddr_in serverAddress;
+    struct sockaddr_in clientAddress;
+    int clientAddressLength;  // Change from socklen_t to int
+} HttpConfig;
 
-#### void setHeader(Header* response, int index, char* key, char* value);
-sets header in headerMap  
-you are responsible for array overflow here  
-just be careful with index
 
-#### void fillResponse(HttpResponse* response, char* version, char* status, char* reasonPhrase, Header* headerMap, size_t headerMapSize, char* body);
-this fills response struct in really accessible way
+// Represents HTTP server config for Linux
+typedef struct {
+    int port;
+    int serverSocket;
+    int clientSocket;
+    int maxConntections;
+    struct sockaddr_in serverAddress;
+    struct sockaddr_in clientAddress;
+    socklen_t clientAddressLength;
+} HttpConfig;   
 
-#### size_t serializeResponse(HttpResponse* response, size_t responseLength, char* responseBuffer);
-this serializes HttpResponse struct into responseBuffe so you can send it
+// Initializes HTTP server variables and "starts it up"
+int createServer(HttpConfig* config, int port);
 
+// Initializes HTTP request structure
+void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOfBody);
+
+// Initializes HTTP response structure
+void createResponse(HttpResponse* response, size_t maxHeaderCount, size_t maxSizeOfBody);
+
+// Cleans up HTTP server variables and "turns it off"
+void deleteServer(HttpConfig* config);
+
+// Cleand up after HttpRequest and HttpResponse structs
+void deleteRequest(HttpRequest* request);
+void deleteResponse(HttpResponse* response);
+
+// Reads HTTP request into request buffer
+int getRequest(HttpConfig* config, char* request, size_t requestMaxLength);
+// Writes HTTP response from response buffer
+void sendResponse(HttpConfig* config, char* response, size_t responseLength);
+
+// Parses raw request into request structure
+void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* request);
+
+// Manipulates HttpResponse
+// You will probably not need this
+void setVersion(HttpResponse* response, char* version);
+void setStatus(HttpResponse* response, char* status);
+void setReasonPhrase(HttpResponse* response, char* reasonPhrase);
+void setHeader(Header* response, int index, char* key, char* value);
+
+// Fills HttpResponse
+void fillResponse(HttpResponse* response, char* version, char* status, char* reasonPhrase, Header* headerMap, size_t headerMapSize, char* body);
+
+// Serializes Http Response into response buffer so it can be sent
+size_t serializeResponse(HttpResponse* response, size_t responseLength, char* responseBuffer);
+```
 
 ## Example
 
