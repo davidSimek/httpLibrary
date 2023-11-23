@@ -93,6 +93,8 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
 void setVersion(HttpResponse* response, char* version);
 void setStatus(HttpResponse* response, char* status);
 void setReasonPhrase(HttpResponse* response, char* reasonPhrase);
+
+// Sets Header key and value
 void setHeader(Header* response, int index, char* key, char* value);
 
 // Fills HttpResponse
