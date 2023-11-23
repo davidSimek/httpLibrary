@@ -30,9 +30,9 @@ build_windows() {
 
     if [[ $1 = "-g" ]]; then
         info "building with debug flags"
-        x86_64-w64-mingw32-gcc -g -DWINDOWS=1 -o out/http src/main.c src/httpLibrary.c -lws2_32 2> "$logFile"
+        x86_64-w64-mingw32-gcc -g -c -DWINDOWS=1 -o out/httpLibrary.lib src/httpLibrary.c -lws2_32 2> "$logFile"
     else
-        x86_64-w64-mingw32-gcc -DWINDOWS=1 -o out/http src/main.c src/httpLibrary.c -lws2_32 2> "$logFile"
+        x86_64-w64-mingw32-gcc -c -DWINDOWS=1 -o out/httpLibrary.lib src/httpLibrary.c -lws2_32 2> "$logFile"
     fi
 
     if [ $? -eq 0 ]; then
@@ -51,14 +51,15 @@ build_linux() {
 
     if [[ $1 = "-g" ]]; then
         info "building with debug flags"
-        # gcc -g -o out/http src/main.c src/httpLibrary.c 2> "$logFile"
-        gcc -g -c src/httpLibrary.c -o out/httpLibrary.o
-        ar rcs out/httpLibrary.a out/httpLibrary.o
+        gcc -g -c src/httpLibrary.c -o out/httpLibrary.o 2> "$logFile"
+        ar rcs out/httpLibrary.a out/httpLibrary.o 2>> "$logFile"
+
         rm out/httpLibrary.o
     else
-        # gcc -o out/http src/main.c src/httpLibrary.c 2> "$logFile"
-        gcc -c src/httpLibrary.c -o out/httpLibrary.o
-        ar rcs out/httpLibrary.a out/httpLibrary.o
+        gcc -c src/httpLibrary.c -o out/httpLibrary.o 2> "$logFile"
+
+        ar rcs out/httpLibrary.a out/httpLibrary.o 2>> "$logFile"
+
         rm out/httpLibrary.o
     fi
 
