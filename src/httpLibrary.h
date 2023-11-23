@@ -26,6 +26,7 @@ typedef struct {
     Header* headerMap;
     size_t headerMapSize;
     char* body;
+    size_t maxSizeOfBody;
 } HttpRequest;
 
 typedef struct {

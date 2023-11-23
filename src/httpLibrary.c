@@ -256,7 +256,7 @@ void parseRequest(char* rawRequest, size_t rawRequestLength, HttpRequest* reques
             charIndex++;
         }
         else if (stage == 4) {
-            if (stageIndex == BODY_LENGTH - 1 || currentChar == '\0') {
+            if (stageIndex == request->maxSizeOfBody - 1 || currentChar == '\0') {
                 request->body[stageIndex] = '\0';
                 return;
             }
@@ -271,6 +271,7 @@ void createRequest(HttpRequest* request, size_t maxHeaderCount, size_t maxSizeOf
     request->headerMap = (Header*)malloc(sizeof(Header) * (request->headerMapSize + 1));
 
     request->body = (char*)malloc(maxSizeOfBody);
+    request->maxSizeOfBody = maxSizeOfBody;
 }
 
 void createResponse(HttpResponse* response, size_t maxHeaderCount, size_t maxSizeOfBody) {
