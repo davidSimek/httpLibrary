@@ -42,12 +42,12 @@ typedef struct {
 #ifdef WINDOWS
 typedef struct {
     int port;
-    SOCKET serverSocket;  // Change from int to SOCKET
-    SOCKET clientSocket;  // Change from int to SOCKET
+    SOCKET serverSocket;
+    SOCKET clientSocket;
     int maxConnections;
     struct sockaddr_in serverAddress;
     struct sockaddr_in clientAddress;
-    int clientAddressLength;  // Change from socklen_t to int
+    int clientAddressLength;
 } HttpConfig;
 #else
 
